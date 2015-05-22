@@ -21,7 +21,11 @@ class ClientesForm extends Form
                         'required' => 'true'
                 ),
                 'options' => array(
-                        'label' => 'Nombre',
+                        'label' => 'Nombre completo:',
+                        'label_attributes' => array(
+                                'class'  => 'fitem'
+                        ),
+                        
                 )
         ));
     }

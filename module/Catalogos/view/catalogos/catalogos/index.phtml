@@ -13,13 +13,14 @@
     .fitem{
     	margin-bottom:5px;
     }
-    .fitem label{
+    .fitem{
     	display:inline-block;
-    	width:80px;
+    	width:174px;
     }
     .fitem input{
     	width:160px;
     }
+   
 </style>
 
 <div class="easyui-layout" style="width:700px;height:350px;">
@@ -51,16 +52,13 @@
 </div>
 
 <div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
-    <div class="ftitle">User Information</div>
+    <div class="ftitle">Informaci&oacute;n de cliente</div>
     <?php 
         $form = $this->form;
         $form->prepare();
         echo $this->form()->openTag($form);
-        //$formLabel = $this->plugin('Nombre');
-        $nombre = $form->get('nombreCompleto');
-        echo $this->formInput($nombre);
-        echo $this->formElementErrors($nombre);
-        echo $this->form()->closeTag($form);
+        echo $this->formRow($form->get('nombreCompleto'));        
+        echo $this->form()->closeTag();
      ?>
 </div>
 
@@ -100,7 +98,7 @@ $(function(){
 });
 
 function newUser(){
-    $('#dlg').dialog('open').dialog('setTitle','New User');
+    $('#dlg').dialog('open').dialog('setTitle','Nuevo Cliente');
     $('#fmCliente').form('clear');
     url = 'save_user.php';
 }
