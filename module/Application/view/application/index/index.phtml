@@ -1,0 +1,84 @@
+<?php 
+$title = 'Iniciar Sesion';
+$this->headTitle($title);
+?>
+<h2><?php echo $this->escapeHtml($title); ?></h2>
+<br/>
+<?php
+$flashMessage = $this->flashMessenger()->getMessages();
+if (count($flashMessage)) :
+    ?>
+<div class="row">
+	<ul>
+        <?php
+    foreach ($flashMessage as $msg) :
+        foreach ($msg as $type => $message) :
+            ?>
+            <li><span class="<?php echo $type; ?>"><?php echo $message; ?></span></li>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <?php if(isset($this->messages)) : ?>
+    <ul>
+        <?php foreach ($this->messages as $type => $msg) : ?>
+        <li><span class="<?php echo $type; ?>"><?php echo $msg; ?></span></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+<div style="margin:20px 0;"></div>
+<?php 
+        $form = $this->form;
+        $form->prepare();
+        echo $this->form()->openTag($form);
+       // echo $flash->render('duplicado',array('btn', 'btn-danger'));
+       
+        ?>
+        <div class="easyui-panel" title="Login to system" style="width:400px;padding:30px 70px 20px 70px">
+            <div style="margin-bottom:10px">
+                <?php
+                    //$formLabel = $this->plugin('formLabel');
+                    $email = $form->get('email');
+                    echo $this->formInput($email);
+                    echo $this->formElementErrors($email);
+                 ?>                
+            </div>
+            <div style="margin-bottom:10px">
+                <?php
+                   $pass = $form->get('password');
+                   echo $this->formInput($pass);
+                   echo $this->formElementErrors($pass);                  
+                 ?>                
+            </div>
+            
+             <div>
+                <?php 
+                $submit = $form->get('submit');
+                echo $this->formRow($form->get('loginCsrf'));
+                echo $this->formsubmit($submit);
+                ?>
+                <!-- <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" style="padding:5px 0px;width:100%;" onclick="submitForm()">
+                    <span style="font-size:14px;">Login</span>
+                </a> -->
+            </div>
+            
+        </div>      
+       
+     <?php echo $this->form()->closeTag($form);?>        
+        
+        
+<script>
+/*$(function(){
+	$('#formularioLogin').form({
+		url:'<?php //echo $this->url('application/default',array('controller' => 'index', 'action' => 'index'))?>',
+		onSubmit:function(){
+			return $(this).form('validate');
+		},
+		success:function(data){
+			//document.location.reload(true);
+			$.messager.alert('Access', data, 'info');
+		}
+	});
+});*/
+</script>

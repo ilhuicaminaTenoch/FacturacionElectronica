@@ -1,0 +1,107 @@
+<style type="text/css">
+    #fm{
+    	margin:0;
+    	padding:10px 30px;
+    }
+    .ftitle{
+    	font-size:14px;
+    	font-weight:bold;
+    	padding:5px 0;
+    	margin-bottom:10px;
+    	border-bottom:1px solid #ccc;
+    }
+    .fitem{
+    	margin-bottom:5px;
+    }
+    .fitem label{
+    	display:inline-block;
+    	width:80px;
+    }
+    .fitem input{
+    	width:160px;
+    }
+</style>
+
+<div class="easyui-layout" style="width:700px;height:350px;">
+    <div data-options="region:'north'" style="height:50px">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">Clientes</a>
+    </div>   
+    <div data-options="region:'center',title:'Clientes',iconCls:'icon-ok'">
+        
+        <table class="easyui-datagrid" id="dgClientes"
+            data-options="rownumbers:true,                                            
+                          singleSelect:false,                          
+                          method:'get',
+                          idField:'idCliente',
+                          pagination:true,
+                          toolbar:'#toolbar'
+                          ">
+            <thead>
+                <tr>                                       
+                    <th data-options="field:'nombreCompleto',align:'left'">Nombre</th>                                  
+                </tr>
+            </thead>
+        </table>
+        <div id="toolbar">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Cliente</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edita Cliente</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Quitar Cliente</a>
+        </div>
+    </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">User Information</div>
+    <?php 
+        $form = $this->form;
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        //$formLabel = $this->plugin('Nombre');
+        $nombre = $form->get('nombreCompleto');
+        echo $this->formInput($nombre);
+        echo $this->formElementErrors($nombre);
+        echo $this->form()->closeTag($form);
+     ?>
+</div>
+
+<!-- MUESTRA ERRORES DE LA VALIDACION -->
+<?php
+$flashMessage = $this->flashMessenger()->getMessages();
+if (count($flashMessage)) :
+    ?>
+<div class="row">
+	<ul>
+        <?php
+    foreach ($flashMessage as $msg) :
+        foreach ($msg as $type => $message) :
+            ?>
+            <li><span class="<?php echo $type; ?>"><?php echo $message; ?></span></li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <?php if(isset($this->messages)) : ?>
+    <ul>
+        <?php foreach ($this->messages as $type => $msg) : ?>
+        <li><span class="<?php echo $type; ?>"><?php echo $msg; ?></span></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
+<script type="text/javascript">
+$(function(){
+	var dgGeneral = $('#dgClientes').datagrid({
+    	filterBtnIconCls:'icon-filter',
+		url:'<?php echo $this->url('catalogos/default', array('controller' => 'catalogos','action' => 'listado'));?>',
+		remoteFilter:true    		
+		});	
+	dgGeneral.datagrid('enableFilter');	
+});
+
+function newUser(){
+    $('#dlg').dialog('open').dialog('setTitle','New User');
+    $('#fmCliente').form('clear');
+    url = 'save_user.php';
+}
+</script>
