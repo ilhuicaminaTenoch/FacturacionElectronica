@@ -21,13 +21,19 @@ use Application\Model\UserRole;
 use Application\Model\ResourceTable;
 use Application\Model\PermissionTable;
 use Application\Model\RolePermissionTable;
+use Zend\Validator\AbstractValidator;
+use Zend\I18n\Translator\Translator;
+
 
 class Module
 {
     public function onBootstrap(MvcEvent $e)
     {
-        $e->getApplication()->getServiceManager()->get('translator');
-        $eventManager        = $e->getApplication()->getEventManager();
+        $translator = $e->getApplication()->getServiceManager()->get('translator');
+        $translatorV = new Translator();        
+        $translatorV->addTranslationFile('phpArray', 'resources/languages/es/Zend_Validate.php','default','es_MX');                
+        AbstractValidator::setDefaultTranslator($translatorV);
+        $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         

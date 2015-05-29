@@ -16,6 +16,8 @@ use Catalogos\Model\Clientes;
 use Zend\Json\Json;
 use Catalogos\Form\ClientesForm;
 use Catalogos\Form\ValidaFormClientes;
+use Application\Utility\Util;
+
 
 class CatalogosController extends AbstractActionController
 {
@@ -54,8 +56,64 @@ class CatalogosController extends AbstractActionController
             $listado = $modeloClientes->listaClientes($offset,$rows,$filterRules);        	
             $json = new JsonModel($listado);           
             return $json;
+        }       
+    }
+    
+    public function guardaclienteAction()
+    {
+        $request = $this->getRequest();
+        $response = $this->getResponse();
+        
+        $viewmodel = new ViewModel();        
+        $clienteForm = new ClientesForm('fmCliente');        
+
+        
+        
+        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        
+        $viewmodel->setTerminal($request->isXmlHttpRequest());       
+       
+        $messages = array();
+        if ($request->isPost()){                
+            $clienteForm->setData($request->getPost());
+            if (! $clienteForm->isValid()) {
+            	$errors = $clienteForm->getMessages(); 	
+            	
+            	foreach($errors as $key=>$row){
+            	    if (!empty($row) && $key != 'submit') {
+            	        foreach($row as $keyer => $rower){            	        	
+            	            $messages[$key][] = $rower;
+            	        }
+            	    }
+            	}
+            }
         }
         
-        
+        if (!empty($messages)){            
+        	$response->setContent(\Zend\Json\Json::encode($messages));            
+        } else {       	
+        	$modelo = new Clientes($this->dbAdapter);
+        	$guarda = $modelo->guardaClientes($clienteForm->getData());
+        	$response->setContent(\Zend\Json\Json::encode($guarda));        	
+        }
+        return $response;            
     }
+    
+    public function consultacpAction()
+    {
+        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        $viewModel = new ViewModel();
+        if ($this->request->isXmlHttpRequest())
+        {
+            $modeloCp = new Util($this->dbAdapter);
+            $codigoPostal = $this->params()->fromPost('codigoPostal');
+            $consultaCodigoPostal = $modeloCp->consultaCodigoPostal($codigoPostal);
+           
+            $viewModel->setVariables(array('datos'=>$consultaCodigoPostal))
+            ->setTerminal(true);
+            
+            return $viewModel;
+        }
+    }
+    
 }

@@ -1,65 +1,114 @@
 <style type="text/css">
-    #fm{
-    	margin:0;
-    	padding:10px 30px;
-    }
-    .ftitle{
-    	font-size:14px;
-    	font-weight:bold;
-    	padding:5px 0;
-    	margin-bottom:10px;
-    	border-bottom:1px solid #ccc;
-    }
-    .fitem{
-    	margin-bottom:5px;
-    }
-    .fitem{
-    	display:inline-block;
-    	width:174px;
-    }
-    .fitem input{
-    	width:160px;
-    }
-   
+#fm {
+	margin: 0;
+	padding: 10px 30px;
+}
+
+.ftitle {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+	margin-bottom: 10px;
+}
+
+.fitem {
+	display: inline-block;
+	width: 174px;
+}
+
+.fitem input {
+	width: 160px;
+}
 </style>
 
-<div class="easyui-layout" style="width:700px;height:350px;">
-    <div data-options="region:'north'" style="height:50px">
-        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">Clientes</a>
-    </div>   
-    <div data-options="region:'center',title:'Clientes',iconCls:'icon-ok'">
-        
-        <table class="easyui-datagrid" id="dgClientes"
-            data-options="rownumbers:true,                                            
-                          singleSelect:false,                          
+<div class="easyui-layout" style="width: 700px; height: 350px;">
+	<div data-options="region:'north'" style="height: 50px">
+		<a href="#" class="easyui-linkbutton"
+			data-options="iconCls:'icon-search'" style="width: 80px">Clientes</a>
+	</div>
+	<div data-options="region:'center',title:'Clientes',iconCls:'icon-ok'">
+
+		<table class="easyui-datagrid" id="dgClientes"
+			data-options="rownumbers:true,                                            
+                          singleSelect:true,                          
                           method:'get',
                           idField:'idCliente',
                           pagination:true,
                           toolbar:'#toolbar'
                           ">
-            <thead>
-                <tr>                                       
-                    <th data-options="field:'nombreCompleto',align:'left'">Nombre</th>                                  
-                </tr>
-            </thead>
-        </table>
-        <div id="toolbar">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Cliente</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edita Cliente</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Quitar Cliente</a>
-        </div>
-    </div>
+			<thead>
+				<tr>
+					<th data-options="field:'nombreCompleto',align:'left'">Nombre</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="toolbar">
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Cliente</a> 
+			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edita Cliente</a> 
+			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Quitar Cliente</a>
+		</div>
+	</div>
 </div>
 
-<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
-    <div class="ftitle">Informaci&oacute;n de cliente</div>
+<div id="dlg" class="easyui-dialog" style="width: 600px; height: 380px; padding: 10px 20px" closed="true" buttons="#dlg-buttons" modal="true">
+	<div class="ftitle">Informaci&oacute;n de cliente</div>
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    
+    $nombreCompleto = $form->get('nombreCompleto');
+    echo $this->formRow($nombreCompleto);
+    
+    $fechaDeNamcimiento = $form->get('fechaDeNacimiento');
+    echo $this->formrow($fechaDeNamcimiento);
+    
+    $calle = $form->get('calle');
+    echo $this->formrow($calle);
+    
+    $numeroInterior = $form->get('numeroInterior');
+    echo $this->formrow($numeroInterior);
+    
+    $numeroExterior = $form->get('numeroExterior');
+    echo $this->formrow($numeroExterior);   
+    ?>
+    <div id="contenedorCodigoPostal">
+        <div class="fitem">
+            <?php 
+            $idCodigoPostal = $form->get('idCodigoPostal');
+            echo $this->formrow($idCodigoPostal);
+            $codigoPostal = $form->get('codigo');
+            echo $this->formrow($codigoPostal); 
+            ?>
+        </div>
+        <?php 
+        $asentamiento = $form->get('asentamiento');
+        echo $this->formrow($asentamiento);
+        
+        $municipio = $form->get('municipio');
+        echo $this->formrow($municipio);
+        
+        $ciudad = $form->get('ciudad');
+        echo $this->formrow($ciudad);
+        
+        $estado = $form->get('estado');
+        echo $this->formrow($estado);
+        ?>
+    </div>
     <?php 
-        $form = $this->form;
-        $form->prepare();
-        echo $this->form()->openTag($form);
-        echo $this->formRow($form->get('nombreCompleto'));        
-        echo $this->form()->closeTag();
-     ?>
+    $telefonoMovil = $form->get('telefonoMovil');
+    echo $this->formrow($telefonoMovil);
+    echo $this->form()->closeTag();
+    ?>
+</div>
+<div id="dlg-buttons">
+	<a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width: 90px">Save</a>	
+	<a 	href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width: 90px">Cancel</a>
 </div>
 
 <!-- MUESTRA ERRORES DE LA VALIDACION -->
@@ -89,17 +138,98 @@ if (count($flashMessage)) :
 
 <script type="text/javascript">
 $(function(){
+	/*Listado de clientes y busqueda de los mismos*/
 	var dgGeneral = $('#dgClientes').datagrid({
     	filterBtnIconCls:'icon-filter',
 		url:'<?php echo $this->url('catalogos/default', array('controller' => 'catalogos','action' => 'listado'));?>',
 		remoteFilter:true    		
 		});	
-	dgGeneral.datagrid('enableFilter');	
+	dgGeneral.datagrid('enableFilter');
+
+
+	var t = $('#codigo');
+	t.textbox('textbox').bind('keydown', function(e){
+		if (e.keyCode == 13){	// when press ENTER key, accept the inputed value.			
+			consultaCodigoPostal($(this).val());
+		}
+	});
+
+
 });
 
+/*Abre modal */
 function newUser(){
     $('#dlg').dialog('open').dialog('setTitle','Nuevo Cliente');
     $('#fmCliente').form('clear');
-    url = 'save_user.php';
+    url = '<?php echo $this->url('catalogos/default', array('controller' => 'catalogos','action' => 'guardacliente'));?>';
+}
+
+function saveUser(){
+    $('#fmCliente').form('submit',{
+        url: url,
+        onSubmit: function(){
+            return $(this).form('validate');
+        },
+        success: function(result){
+            var result = eval('('+result+')');   
+            if (result.success){
+                $('#dlg').dialog('close');
+                $('#dgClientes').datagrid('reload');                
+            } else {
+            	show_props(result,"o");
+            }
+        }
+    });
+}
+function clearForm(){
+    $('#fmCliente').form('clear');
+}
+function show_props(obj, objName) {   
+   for (var i in obj) {
+	   $.messager.show({
+           title: 'Error en: '+i,
+           msg: obj[i]
+       });       
+   }   
+}
+
+function editUser(){
+    var row = $('#dgClientes').datagrid('getSelected');
+    if (row){
+        $('#dlg').dialog('open').dialog('setTitle','Edit User');
+        $('#fmCliente').form('load',row);
+        url = 'update_user.php?id='+row.id;
+    }
+}
+
+function consultaCodigoPostal(codigoPostal){
+    $.ajax({
+    	async: true,
+    	cache: false,
+    	type: "POST",
+    	datatype: "html",
+    	contentType: "application/x-www-form-urlencoded",
+    	url: '<?php echo $this->url('catalogos/default', array('controller' => 'catalogos','action' => 'consultacp'));?>',
+    	data: "codigoPostal=" + codigoPostal,
+    	beforeSend: function() {
+    		$.messager.progress({
+    			title:'Por favor espere',
+    			msg:'Cargando datos...'
+    		});
+    	},
+    	success: function(datos){
+    		$.messager.progress('close');
+    		$("#contenedorCodigoPostal").html(datos);
+    	},
+    	timeout: 4000,
+    	error: function(xhr, ajaxOptions, thrownError) {
+    		$.messager.show({
+    			title:'ERROR',
+    			msg:'El error es: '+thrownError,
+    			timeout:5000,
+    			showType:'slide'
+    		});
+    	}
+    });
 }
 </script>

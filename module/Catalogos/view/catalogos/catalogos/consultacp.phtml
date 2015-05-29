@@ -1,0 +1,31 @@
+<?php
+$maqueta = "";
+
+if (count($this->datos) > 1) {
+    $maqueta .= "<div class=\"fitem\">";
+    $maqueta .= "<input type = \"hidden\" name=\"codigo\" value=\"{$this->datos[0]['codigo']}\">";
+    $maqueta .="<label class=\"fitem\">Colonia";
+	$maqueta .= "<select class=\"easyui-combobox\" name=\"idCodigoPostal\" style=\"width:164px;\">";
+	foreach ($this->datos as $valor) {
+		$maqueta .= "<option value=\"{$valor['idCodigoPostal']}\">{$valor['asentamiento']}</option>";
+	}
+	$maqueta .="</select>";
+	$maqueta .="</label>";
+	$maqueta .="</div>";
+		
+	$maqueta .="<label class=\"fitem\"> Municipio";
+	$maqueta .= "<input name=\"municipio\" class=\"easyui-textbox\" disabled=\"disabled\" value=\"{$this->datos[0]['municipio']}\">";
+	$maqueta .="</label>";
+	
+	$maqueta .="<label class=\"fitem\">Ciudad";
+	$maqueta .= "<input name=\"ciudad\" class=\"easyui-textbox\" disabled=\"disabled\" value=\"{$this->datos[0]['ciudad']}\">";
+	$maqueta .="</label>";
+	
+	$maqueta .="<label class=\"fitem\"> Estado";
+	$maqueta .= "<input name=\"estado\" class=\"easyui-textbox\" disabled=\"disabled\" value=\"{$this->datos[0]['estado']}\">";
+	$maqueta .="</label>";
+}
+
+echo $maqueta;
+
+?>

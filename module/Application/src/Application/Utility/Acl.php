@@ -35,6 +35,7 @@ public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     }
     public function initAcl()
     {
+        
         $this->roles = $this->_getAllRoles();
         $this->resources = $this->_getAllResources();
         $this->rolePermission = $this->_getRolePermissions();        
@@ -49,7 +50,8 @@ public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
             ->_addRoleResources();
     }
     public function isAccessAllowed($role, $resource, $permission)
-    {     
+    {   
+        //$this->debugAcl($role, $resource, $permission);
                
         if (! $this->hasResource($resource)) {
             return false;

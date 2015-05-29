@@ -3,6 +3,7 @@ namespace Catalogos\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Sql;
 /**
  *
  * @author jose.moreno
@@ -29,12 +30,12 @@ class Clientes extends TableGateway
         $sqlBuscar = "";       
         $sqlBuscar .= "SELECT";
         $sqlBuscar .= " persona.idPersona,";
-        $sqlBuscar .= " persona.nombreCompleto,";
-        $sqlBuscar .= " DATE_FORMAT(persona.fechaDeNacimiento,'%d-%m-%Y') AS fechaDeNacimiento,";
+        $sqlBuscar .= " persona.nombreCompleto,";        
+        $sqlBuscar .= " persona.fechaDeNacimiento,";
         $sqlBuscar .= " persona.calle,";
         $sqlBuscar .= " persona.numeroInterior,";
         $sqlBuscar .= " persona.numeroExterior,";
-        $sqlBuscar .= " persona.idCodigoPostal,";
+        $sqlBuscar .= " persona.idCodigoPostal,";        
         $sqlBuscar .= " persona.telefonoMovil,";
         $sqlBuscar .= " codigospostales.codigo,";
         $sqlBuscar .= " codigospostales.asentamiento,";
@@ -66,6 +67,42 @@ class Clientes extends TableGateway
         $arreglo = array("total" => $arregloTotal[0]['total'], "rows" =>$arregloBucar);
         return $arreglo;
     }
+    
+    public function guardaClientes($datos)
+    {
+        $resultado = array();        
+        
+        try {
+            $sql = new Sql($this->dbAdapter);
+            $insert = $sql->insert('persona');
+            $newData = array(
+            		'nombreCompleto' => $datos['nombreCompleto'],
+            		'fechaDeNacimiento' => $datos['fechaDeNacimiento'],
+            		'calle' => $datos['calle'],
+            		'numeroInterior' => $datos['numeroInterior'],
+            		'numeroExterior' => $datos['numeroExterior'],
+            		'idCodigoPostal' => $datos['idCodigoPostal'],
+            		'telefonoMovil' => $datos['telefonoMovil']
+            );
+            $insert->values($newData);
+            $statement = $sql->prepareStatementForSqlObject($insert);
+            $result = $statement->execute();
+            $resultado = array('success'=>1);
+            
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {            
+            $code = $e->getCode();
+            $msg = $e->getMessage();
+            $file = $e->getFile();
+            $line = $e->getFile();
+            $resultado = array("ErrorInternio" => "$line ERROR #: $code ERROR: $msg");             
+        }catch (\Exception $e) {
+            $resultado = array("ErrorInternio" =>$e->getMessage());
+        }
+        return $resultado;
+            
+
+    }
+    
 
    
     
