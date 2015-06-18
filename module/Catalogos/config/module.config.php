@@ -3,6 +3,10 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Catalogos\Controller\Catalogos' => 'Catalogos\Controller\CatalogosController',
+            'Catalogos\Controller\Productos' => 'Catalogos\Controller\ProductosController',
+            'Catalogos\Controller\Categorias' => 'Catalogos\Controller\CategoriasController',
+            'Catalogos\Controller\Perfiles' => 'Catalogos\Controller\PerfilesController',
+            'Catalogos\Controller\Usuarios' => 'Catalogos\Controller\UsuariosController',
         ),
     ),
     'router' => array(

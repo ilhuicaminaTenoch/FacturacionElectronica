@@ -1,0 +1,142 @@
+<table id="dgUsuarios" title="Usuatios" class="easyui-datagrid" style="width:700px;height:250px"
+data-options="rownumbers:true,                                            
+                          singleSelect:true,                          
+                          method:'post',
+                          idField:'idUsuario',
+                          pagination:true,
+                          toolbar:'#toolbar'">
+    <thead>
+        <tr>
+            <th field="nombreCompleto" width="150">Nombre</th>
+            <th field="email" width="150">Email</th>
+            <th field="perfil" width="150">Perfil</th>            
+        </tr>
+    </thead>
+</table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Usuario</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Editar Usuario</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Eliminar Usuario</a>
+</div>
+
+<div id="dlg-buttons">
+	<a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width: 90px">Guardar</a>	
+	<a 	href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="clearForm();" style="width: 90px">Cancelar</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 600px; height: 380px; padding: 10px 20px" closed="true" buttons="#dlg-buttons" modal="true">
+    <div class="ftitle">Informaci&oacute;n de usuario</div>
+    <?php 
+    $form = $this->form;
+    $form->prepare();
+    echo $this->form()->openTag($form);
+    
+    $email = $form->get('email');
+    echo $this->formrow($email);
+    
+    $contrasena = $form->get('contrasena');    
+    echo $this->formrow($contrasena);
+ ?>
+    
+    <div class="fitem">
+    <?php
+    $idPersona = $form->get('idPersona');
+    echo $this->formrow($idPersona); 
+    ?>
+    </div>
+    <?php 
+    echo $this->form()->closeTag();
+    ?>
+</div>
+<!-- MUESTRA ERRORES DE LA VALIDACION -->
+<?php
+$flashMessage = $this->flashMessenger()->getMessages();
+if (count($flashMessage)) :
+    ?>
+<div class="row">
+	<ul>
+        <?php
+    foreach ($flashMessage as $msg) :
+        foreach ($msg as $type => $message) :
+            ?>
+            <li><span class="<?php echo $type; ?>"><?php echo $message; ?></span></li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <?php if(isset($this->messages)) : ?>
+    <ul>
+        <?php foreach ($this->messages as $type => $msg) : ?>
+        <li><span class="<?php echo $type; ?>"><?php echo $msg; ?></span></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
+<script>
+$(function(){
+	var dg = $('#dgUsuarios').datagrid({
+		filterBtnIconCls:'icon-filter',
+    	url:'<?php echo $this->url('catalogos/default', array('controller' => 'usuarios','action' => 'listado'));?>',
+		remoteFilter:true,				
+		});
+	dg.datagrid('enableFilter',[{		
+		field:'perfil',
+    	type:'combobox',
+    	options:{
+    		panelHeight:'auto',
+    		data:<?php echo $this->filterComboPerfiles; ?>,
+ 			onChange:function(value){
+ 				if (value == ''){
+					dg.datagrid('removeFilterRule', 'nombreCategoria');
+				} else {
+					dg.datagrid('addFilterRule', {
+						field: 'nombrePerfil',
+						op: 'equal',
+						value: value
+					});
+				}
+ 				dg.datagrid('doFilter');
+ 			}
+    	},
+    	
+	}]);
+
+
+	$('#idPersona').combogrid({
+	    panelWidth:300,
+	    url: '<?php echo $this->url('catalogos/default', array('controller' => 'usuarios','action' => 'combogrid'));?>',
+	    idField:'idPersona',
+	    textField:'nombreCompleto',
+	    mode:'remote',
+	    fitColumns:true,
+	    columns:[[	        
+	        {field:'nombreCompleto',title:'Nombre',align:'left',width:80},
+	        
+	    ]]
+	});
+});
+function newUser(){
+    $('#dlg').dialog('open').dialog('setTitle','Nuevo Usuario');
+    $('#formularioUsuario').form('clear');
+    url = '<?php echo $this->url('catalogos/default', array('controller' => 'usuarios','action' => 'guarda'));?>';
+}
+
+function saveUser(){
+    $('#formularioUsuario').form('submit',{
+        url: url,
+        onSubmit: function(){
+            return $(this).form('validate');
+        },
+        success: function(result){
+            var result = eval('('+result+')');   
+            if (result.success){
+                $('#dlg').dialog('close');
+                $('#dgUsuarios').datagrid('reload');                
+            } else {
+            	show_props(result,"o");
+            }
+        }
+    });
+}
+</script>

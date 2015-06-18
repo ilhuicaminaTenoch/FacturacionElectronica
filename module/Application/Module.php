@@ -23,6 +23,7 @@ use Application\Model\PermissionTable;
 use Application\Model\RolePermissionTable;
 use Zend\Validator\AbstractValidator;
 use Zend\I18n\Translator\Translator;
+use InputFilter;
 
 
 class Module
@@ -147,7 +148,8 @@ class Module
         return array(
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/' .__NAMESPACE__
+                    __NAMESPACE__ => __DIR__ . '/src/' .__NAMESPACE__,
+                    'Inputfilter' => __DIR__ .'/../../vendor/Inputfilter',
                 ),
             ),
         );

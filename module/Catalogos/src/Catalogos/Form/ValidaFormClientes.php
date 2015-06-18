@@ -30,6 +30,15 @@ class ValidaFormClientes implements InputFilterAwareInterface
             $factory = new InputFactory();
             
             $inputFilter->add(
+                    $factory->createInput(array(
+                            'name'     => 'idPersona',
+                             'required' => true,
+                             'filters'  => array(
+                                 array('name' => 'Int'),
+                             ),
+                    )));
+            
+            $inputFilter->add(
                     $factory->createInput(
                             array(
                                     'name' => 'nombreCompleto',

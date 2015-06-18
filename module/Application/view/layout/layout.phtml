@@ -13,18 +13,23 @@
                         ->prependStylesheet($this->basePath() . '/jquery-easyui/themes/icon.css')
                         ->prependStylesheet($this->basePath() . '/jquery-easyui/themes/color.css')
                         ->prependStylesheet($this->basePath() . '/css/menu.css')
+                        ->prependStylesheet($this->basePath() . '/css/Form.css')
                          ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+                                      ->prependFile($this->basePath() . '/js/utils.js')
                                       ->prependFile($this->basePath() . '/jquery-easyui/locale/easyui-lang-es.js')
                                       ->prependFile($this->basePath() . '/jquery-easyui/plugins/datagrid-filter.js')
+                                      ->prependFile($this->basePath() . '/jquery-easyui/plugins/jquery.edatagrid.js')
                                       ->prependFile($this->basePath() . '/jquery-easyui/jquery.easyui.min.js')
-                                      ->prependFile($this->basePath() . '/js/jquery-2.1.3.min.js') ?>
+                                      ->prependFile($this->basePath() . '/js/jquery-2.1.3.min.js')
+                                       ?>
 
     </head>
     <body>
         <?php echo $this->content; ?>        
         <?php echo $this->inlineScript() ?>
+
     </body>
 </html>

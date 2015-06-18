@@ -107,13 +107,74 @@ class CatalogosController extends AbstractActionController
         {
             $modeloCp = new Util($this->dbAdapter);
             $codigoPostal = $this->params()->fromPost('codigoPostal');
+            $bandera = $this->params()->fromPost('bandera');
             $consultaCodigoPostal = $modeloCp->consultaCodigoPostal($codigoPostal);
            
-            $viewModel->setVariables(array('datos'=>$consultaCodigoPostal))
+            $viewModel->setVariables(array('datos'=>$consultaCodigoPostal,"bandera"=>$bandera))
             ->setTerminal(true);
             
             return $viewModel;
         }
     }
+    
+    public function updateclienteAction()
+    {
+    	$request = $this->getRequest();
+    	$response = $this->getResponse();
+    
+    	$viewmodel = new ViewModel();
+    	$clienteForm = new ClientesForm('fmCliente');
+    
+    
+    
+    	$this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+    
+    	$viewmodel->setTerminal($request->isXmlHttpRequest());
+    	 
+    	$messages = array();
+    	if ($request->isPost()){
+    		$clienteForm->setData($request->getPost());
+    		if (! $clienteForm->isValid()) {
+    			$errors = $clienteForm->getMessages();
+    			 
+    			foreach($errors as $key=>$row){
+    				if (!empty($row) && $key != 'submit') {
+    					foreach($row as $keyer => $rower){
+    						$messages[$key][] = $rower;
+    					}
+    				}
+    			}
+    		}
+    	}
+    
+    	if (!empty($messages)){
+    		$response->setContent(\Zend\Json\Json::encode($messages));
+    	} else {
+    		$modelo = new Clientes($this->dbAdapter);
+    		$guarda = $modelo->updateClientes($clienteForm->getData());
+    		$response->setContent(\Zend\Json\Json::encode($guarda));
+    	}
+    	return $response;
+    }
+    
+    public function eliminaclienteAction(){
+        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        $request = $this->getRequest();
+        $response = $this->getResponse();
+        $viewmodel = new ViewModel();
+        
+        $viewmodel->setTerminal($request->isXmlHttpRequest());
+        
+        
+        $messages = array();
+        $idCliente = $this->params()->fromPost('idCliente');
+        if ($request->isPost()){         
+            $modelo = new Clientes($this->dbAdapter);
+            $elimina = $modelo->removeCliente($idCliente);
+            $response->setContent(\Zend\Json\Json::encode($elimina));
+            return $response;
+        }     
+    }
+     
     
 }

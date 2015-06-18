@@ -39,7 +39,10 @@ class Clientes extends TableGateway
         $sqlBuscar .= " persona.telefonoMovil,";
         $sqlBuscar .= " codigospostales.codigo,";
         $sqlBuscar .= " codigospostales.asentamiento,";
-        $sqlBuscar .= " codigospostales.tipo";
+        $sqlBuscar .= " codigospostales.tipo,";
+        $sqlBuscar .= " codigospostales.municipio,";
+        $sqlBuscar .= " codigospostales.ciudad,";
+        $sqlBuscar .= " codigospostales.estado";
         $sqlBuscar .= " FROM";
         $sqlBuscar .= " persona ,";
         $sqlBuscar .= " codigospostales";
@@ -65,6 +68,8 @@ class Clientes extends TableGateway
         $arregloBucar = $ejecutaQueryBuscar->toArray();
         $arregloTotal = $ejecutaQueryTotal->toArray();
         $arreglo = array("total" => $arregloTotal[0]['total'], "rows" =>$arregloBucar);
+        
+        $this->dbAdapter->getDriver()->getConnection()->disconnect();
         return $arreglo;
     }
     
@@ -94,13 +99,69 @@ class Clientes extends TableGateway
             $msg = $e->getMessage();
             $file = $e->getFile();
             $line = $e->getFile();
-            $resultado = array("ErrorInternio" => "$line ERROR #: $code ERROR: $msg");             
+            $resultado = array("ErrorInterno" => "$line ERROR #: $code ERROR: $msg");             
         }catch (\Exception $e) {
-            $resultado = array("ErrorInternio" =>$e->getMessage());
+            $resultado = array("ErrorInterno" =>$e->getMessage());
         }
+        
+        $this->dbAdapter->getDriver()->getConnection()->disconnect();
         return $resultado;
-            
-
+    }
+    
+    public function updateClientes($datos){
+        $resultado = array();
+        try {
+            $sql = new  Sql($this->dbAdapter);
+            $update = $sql->update();
+            $update->table('persona');
+            $formaArreglo = array(
+                    'nombreCompleto' => $datos['nombreCompleto'],
+                    'fechaDeNacimiento' => $datos['fechaDeNacimiento'],
+                    'calle' => $datos['calle'],
+                    'numeroInterior' => $datos['numeroInterior'],
+                    'numeroExterior' => $datos['numeroExterior'],
+                    'idCodigoPostal' => $datos['idCodigoPostal'],
+                    'telefonoMovil' => $datos['telefonoMovil']
+            );
+            $update->set($formaArreglo);
+            $update->where(array("idPersona"=>$datos['idPersona']));
+            $statement = $sql->prepareStatementForSqlObject($update);
+            $result = $statement->execute();             
+            $resultado = array('success'=>1);
+        	
+        } catch (\Zend\Db\Adapter\Exception\InvalidQueryException $e) {
+            $code = $e->getCode();
+            $msg = $e->getMessage();
+            $file = $e->getFile();
+            $line = $e->getFile();
+            $resultado = array("ErrorInterno" => "$line ERROR #: $code ERROR: $msg");            
+        }catch (\Exception $e){
+            $resultado = array("ErrorInterno" =>$e->getMessage());
+        }
+        
+        $this->dbAdapter->getDriver()->getConnection()->disconnect();
+        return $resultado;        
+    }
+    
+    public function removeCliente($idCliente){
+        $resultado = array();
+        try {
+        	$sql = new Sql($this->dbAdapter);
+        	$elimina = $sql->delete('persona')->where("id = $idCliente");      	
+        	$statement = $sql->prepareStatementForSqlObject($elimina);
+        	$result = $statement->execute();        	
+        	$resultado = array('success' => 1);
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            $msg = $e->getMessage();
+            $file = $e->getFile();
+            $line = $e->getFile();
+            $resultado = array("ErrorInterno" => "$line ERROR #: $code ERROR: $msg");
+        }
+        
+        $this->dbAdapter->getDriver()->getConnection()->disconnect();
+        return $resultado;
+        
     }
     
 

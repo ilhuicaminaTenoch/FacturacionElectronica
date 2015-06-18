@@ -25,7 +25,7 @@ class User extends AbstractTableGateway
     {
         try {
         	$sql = new Sql($this->getAdapter());
-        	$select = $sql->select()->from(array('u' => $this->table));
+        	$select = $sql->select()->from('usuarioperfil');        	
         	             
         	if (count($where) > 0) {
         		$select->where($where);
@@ -35,8 +35,10 @@ class User extends AbstractTableGateway
         		$select->columns($columns);
         	}
         	
-        	$select->join(array('p' => 'perfiles'),'p.idPerfil = u.idPerfil',array('nombre','idPerfil'))
-        	       ->join(array('persona' => 'persona'), 'persona.idPersona = u.idPersona',array('nombreCompleto'));       	
+        	$select->join(array('usuarios' => 'usuarios'),'usuarios.idUsuario = usuarioperfil.idUsuario',array('email',))
+        	       ->join(array('persona' => 'persona'), 'persona.idPersona = usuarios.idPersona',array('nombreCompleto'))
+        	       ->join(array('perfiles' => 'perfiles'), 'perfiles.idPerfil = usuarioperfil.idPerfil', array('nombre')); 
+        	      	
             $statement = $sql->prepareStatementForSqlObject($select);            
             $users = $this->resultSetPrototype->initialize($statement->execute())->toArray();
             return $users;        	

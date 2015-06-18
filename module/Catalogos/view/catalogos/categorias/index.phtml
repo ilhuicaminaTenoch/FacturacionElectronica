@@ -1,0 +1,43 @@
+<table id="dgCatagorias" title="Categorias" style="width:700px;height:250px"
+        toolbar="#toolbar" pagination="true" idField="idCategoria"
+        rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+        <tr>
+            <th field="nombreCategoria" editor="{type:'validatebox',options:{required:true}}">Nombre</th>            
+        </tr>
+    </thead>
+</table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#dgCatagorias').edatagrid('addRow')">Nuevo</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="javascript:$('#dgCatagorias').edatagrid('destroyRow')">Eliminar</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="javascript:$('#dgCatagorias').edatagrid('saveRow')">Guarda</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="javascript:$('#dgCatagorias').edatagrid('cancelRow')">Cancelar</a>
+</div>
+<script type="text/javascript">
+$(function(){
+	var dg = $('#dgCatagorias').edatagrid({
+	    url: '<?php echo $this->url('catalogos/default', array('controller' => 'categorias','action' => 'listado')); ?>',
+	    saveUrl: '<?php echo $this->url('catalogos/default', array('controller' => 'categorias','action' => 'guarda')); ?>',
+	    updateUrl: '<?php echo $this->url('catalogos/default', array('controller' => 'categorias','action' => 'update')); ?>',
+	    destroyUrl: '<?php echo $this->url('catalogos/default', array('controller' => 'categorias','action' => 'elimina')); ?>',
+	    filterBtnIconCls:'icon-filter',
+	    remoteFilter:true,
+	    onError: function(index,row){
+			$.messager.alert('Error',row.msg,'error');
+		},
+		destroyMsg:{
+			norecord:{	// when no record is selected
+				title:'Precausion',
+				msg:'No selecciono ningun registro.'
+			},
+			confirm:{	// when select a row
+				title:'Confirmacion',
+				msg:'Estas seguro que quieres borrarlo?'
+			}
+		}
+	});
+	dg.edatagrid('enableFilter');
+
+	
+});
+</script>

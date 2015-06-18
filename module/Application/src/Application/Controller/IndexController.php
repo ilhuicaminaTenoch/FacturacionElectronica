@@ -53,11 +53,11 @@ class IndexController extends AbstractActionController
         		if ($result->isValid()) {                   
         			$userDetails = $this->_getUserDetails(
         			        array('email' => $data['email']), 
-        			        array('idUsuario'));        			
+        			        array('idUsuario','idUserRol'));        			
         			$session = new Container('User');
         			$session->offsetSet('email', $data['email']);
-        			$session->offsetSet('idUsuario', $userDetails[0]['idUsuario']);
-        			$session->offsetSet('idPerfil', $userDetails[0]['idPerfil']);
+        			$session->offsetSet('idUsuario', $userDetails[0]['idUsuario']); 
+        			$session->offsetSet('idUserRol', $userDetails[0]['idUserRol']);
         			$session->offsetSet('perfil', $userDetails[0]['nombre']);
         			$session->offsetSet('nombreCompleto',$userDetails[0]['nombreCompleto']);		
         			//echo"<pre>"; print_r($session->perfil); echo"</pre>";

@@ -1,0 +1,197 @@
+<?php echo $this->headlink()->prependStylesheet($this->basePath().'/css/progressbar.css');?>
+<div class="easyui-layout" style="width: 800px; height: 550px;">
+	<!-- <div data-options="region:'north'" style="height: 50px">
+		<a href="#" class="easyui-linkbutton"
+			data-options="iconCls:'icon-search'" style="width: 80px">Clientes</a>
+	</div>-->
+	<div data-options="region:'center',title:'Clientes',iconCls:'icon-ok'">
+
+		<table class="easyui-datagrid" id="dgProductos"
+			data-options="rownumbers:true,                                            
+                          singleSelect:true,                          
+                          method:'get',
+                          idField:'idProducto',
+                          pagination:true,
+                          toolbar:'#toolbar'
+                          " style="width:750px;height:350px">
+			<thead>
+				<tr>
+					<th data-options="field:'nombreProducto',align:'left'">Producto</th>
+					<th data-options="field:'precio',align:'right'">Precio</th>
+					<th data-options="field:'stock',align:'right',formatter:formatProgress">Stock</th>
+					<th data-options="field:'nombreCategoria',align:'left'">Categoria</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="toolbar">
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Cliente</a> 
+			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edita Cliente</a> 
+			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Quitar Cliente</a>
+		</div>
+	</div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 600px; height: 380px; padding: 10px 20px" closed="true" buttons="#dlg-buttons" modal="true">
+	<div class="ftitle">Informaci&oacute;n de producto</div>
+	<?php
+	
+	/*foreach ($this->listaCategorias as $categoria) {
+		$value = $this->escapehtml($categoria['value']);
+		$text = $this->escapehtml($categoria['text']);
+		$options[] = array(
+            'label' => $text,
+            'value' => $value
+        );
+	}*/
+	
+	
+	$form = $this->formulario;
+	$form->prepare();
+	echo $this->form()->openTag($form);
+	
+	$nombreProducto = $form->get('nombreProducto');
+    echo $this->formrow($nombreProducto);
+    
+    $idProducto = $form->get('idProducto');
+    echo $this->formrow($idProducto);
+    
+    /*$idCategoria = $form->get('idCategoria')->setAttributes(array('options' => $options));
+    echo $this->formrow($idCategoria);*/
+    $idCategoria = $form->get('idCategoria');
+    echo $this->formrow($idCategoria);    
+   
+    
+    $precio = $form->get('precio');
+    echo $this->formrow($precio);
+    
+    $stock = $form->get('stock');
+    echo $this->formrow($stock);
+    
+    echo $this->form()->closeTag();
+	?>
+</div>
+<div id="dlg-buttons">
+	<a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width: 90px">Guardar</a>	
+	<a 	href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="clearForm();" style="width: 90px">Cancelar</a>
+</div>
+
+<!-- MUESTRA ERRORES DE LA VALIDACION -->
+<?php
+$flashMessage = $this->flashMessenger()->getMessages();
+if (count($flashMessage)) :
+    ?>
+<div class="row">
+	<ul>
+        <?php
+    foreach ($flashMessage as $msg) :
+        foreach ($msg as $type => $message) :
+            ?>
+            <li><span class="<?php echo $type; ?>"><?php echo $message; ?></span></li>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <?php if(isset($this->messages)) : ?>
+    <ul>
+        <?php foreach ($this->messages as $type => $msg) : ?>
+        <li><span class="<?php echo $type; ?>"><?php echo $msg; ?></span></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+<script>
+$(function(){
+	var dg = $('#dgProductos').datagrid({
+		filterBtnIconCls:'icon-filter',
+    	url:'<?php echo $this->url('catalogos/default', array('controller' => 'productos','action' => 'listado'));?>',
+		remoteFilter:true		
+		});
+	dg.datagrid('enableFilter',[{		
+		field:'nombreCategoria',
+    	type:'combobox',
+    	options:{
+    		panelHeight:'auto',
+    		data:<?php echo $this->filterComboCategorias; ?>,
+ 			onChange:function(value){
+ 				if (value == ''){
+					dg.datagrid('removeFilterRule', 'nombreCategoria');
+				} else {
+					dg.datagrid('addFilterRule', {
+						field: 'nombreCategoria',
+						op: 'equal',
+						value: value
+					});
+				}
+ 				dg.datagrid('doFilter');
+ 			}
+    	},
+    	
+	}]);
+});
+function formatProgress(value,row,index){	
+	var cienPorciento = 500;
+	var operacion = (value * 100)/cienPorciento;
+	var s = '';
+	if(operacion > 15){
+		s ='<div id="progress" class="graph"><div id="barAzul" style="width:'+operacion+'%"><p>'+operacion+'%</p></div></div>';	
+	}else{
+		s ='<div id="progress" class="graph"><div id="barRojo" style="width:'+operacion+'%"><p>'+operacion+'%</p></div></div>';
+	}
+	return s;    
+}
+
+function newUser(){
+    $('#dlg').dialog('open').dialog('setTitle','Nuevo producto');
+    $('#fmProductos').form('clear');
+    url = '<?php echo $this->url('catalogos/default', array('controller' => 'productos','action' => 'guarda'));?>';
+}
+function saveUser(){
+    $('#fmProductos').form('submit',{
+        url: url,
+        onSubmit: function(){
+            return $(this).form('validate');
+        },
+        success: function(result){
+            var result = eval('('+result+')');   
+            if (result.success){
+                $('#dlg').dialog('close');
+                $('#dgProductos').datagrid('reload');                
+            } else {
+            	show_props(result,"o");
+            }
+        }
+    });
+}
+function clearForm(){
+    $('#fmProductos').form('clear');
+    $('#dlg').dialog('close');
+}
+function editUser(){
+    var row = $('#dgProductos').datagrid('getSelected');
+    if (row){
+        $('#dlg').dialog('open').dialog('setTitle','Edita producto');
+        $('#fmProductos').form('load',row);
+        url = '<?php echo $this->url('catalogos/default', array('controller' => 'productos','action' => 'update')); ?>?idProducto='+row.idProducto;
+    }
+}
+function destroyUser(){
+	var row = $('#dgProductos').datagrid('getSelected');	
+	if (row){
+		$.messager.confirm('Confirm','Deseas eleminar este producto?',function(r){
+			if (r){
+				$.post('<?php echo $this->url('catalogos/default', array('controller' => 'productos','action' => 'elimina')); ?>',{idProducto:row.idProducto},function(result){
+					
+					if (result.success){
+						$('#dgProductos').datagrid('reload');
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.ErrorInterno
+						});
+					}
+				},'json');
+			}
+		});
+	}
+}
+</script>

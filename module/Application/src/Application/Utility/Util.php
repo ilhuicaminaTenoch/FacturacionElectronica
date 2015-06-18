@@ -71,6 +71,14 @@ class Util extends TableGateway
         //$total = count($datos);
         return  $datos;
     }
+    
+    public function filterCombo($datos){
+        $resultado = array();
+        if (count($datos) > 0) {
+        	array_unshift($datos, array("value"=>"0","text"=>"Todos"));
+        	return $datos;
+        }
+    }
 }
 
 ?>

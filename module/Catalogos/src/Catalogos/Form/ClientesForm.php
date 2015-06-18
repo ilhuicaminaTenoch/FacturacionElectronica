@@ -13,15 +13,22 @@ class ClientesForm extends Form
         parent::__construct($name);
         
         $this->add(array(
+        		'name' => 'idPersona',
+        		'type' => 'Zend\Form\Element\Hidden',
+        		'attributes' => array('name' => 'idPersona')
+        ));
+        
+        $this->add(array(
                 'name' => 'nombreCompleto',
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => array(
                         'name' => 'nombreCompleto',
                         'class' => 'easyui-textbox',                        
-                        'required' => 'true'                                              
+                        'required' => 'true',
+                        'data-options' => 'prompt:\'Nombre completo\''
                 ),
                 'options' => array(
-                        'label' => 'Nombre completo:',
+                        'label' => 'Nombre:',
                         'label_attributes' => array('class'  => 'fitem'),
                         
                 )
@@ -99,8 +106,7 @@ class ClientesForm extends Form
         		'name' => 'codigo',
         		'attributes' => array(
         				'id'    => 'codigo',
-        				'class' => 'easyui-textbox',
-        				'required' => 'true'        		        
+        		        'onchange' =>'cargaCodigoPostal(this.value)'        				     		        
         		),
         		'options' => array(
         				'label' => 'Codigo postal',
