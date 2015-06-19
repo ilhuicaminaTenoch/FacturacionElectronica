@@ -34,6 +34,9 @@ class CatalogosController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             $clienteForm->setData($data);
+            if ($clienteForm->isValid()) {
+                $data = $clienteForm->getData();
+            }            
             
         }else {
             $errors = $clienteForm->getMessages();        		
@@ -66,7 +69,9 @@ class CatalogosController extends AbstractActionController
         
         $viewmodel = new ViewModel();        
         $clienteForm = new ClientesForm('fmCliente');        
-
+        $validaForm = new ValidaFormClientes();
+        
+        $clienteForm->setInputFilter($validaForm->getInputFilter());
         
         
         $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
@@ -124,7 +129,9 @@ class CatalogosController extends AbstractActionController
     
     	$viewmodel = new ViewModel();
     	$clienteForm = new ClientesForm('fmCliente');
-    
+    	$validaForm = new ValidaFormClientes();
+    	
+    	$clienteForm->setInputFilter($validaForm->getInputFilter());
     
     
     	$this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');

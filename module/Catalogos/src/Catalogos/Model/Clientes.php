@@ -147,9 +147,10 @@ class Clientes extends TableGateway
         $resultado = array();
         try {
         	$sql = new Sql($this->dbAdapter);
-        	$elimina = $sql->delete('persona')->where("id = $idCliente");      	
+        	$elimina = $sql->delete('persona')->where("idPersona = $idCliente");      	
         	$statement = $sql->prepareStatementForSqlObject($elimina);
-        	$result = $statement->execute();        	
+        	$result = $statement->execute();
+        	        	
         	$resultado = array('success' => 1);
         } catch (\Exception $e) {
             $code = $e->getCode();

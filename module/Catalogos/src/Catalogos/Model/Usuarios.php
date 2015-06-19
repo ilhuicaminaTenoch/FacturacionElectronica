@@ -6,6 +6,7 @@ use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Predicate\NotIn;
+use Application\Utility\UserPassword;
 
 /**
  *
@@ -38,7 +39,7 @@ class Usuarios extends TableGateway
             $select = $sql->select();
             $select->columns(array("idUserRol", "idUsuario", "idPerfil"));
             $select->from("usuarioperfil");
-            $select->join("usuarios", "usuarios.idUsuario = usuarioperfil.idUsuario", array("email"));
+            $select->join("usuarios", "usuarios.idUsuario = usuarioperfil.idUsuario", array("email","contrasena"));
             $select->join("perfiles", "perfiles.idPerfil = usuarioperfil.idPerfil", array("perfil"=>"nombre"));            
             $select->join("persona", "persona.idPersona = usuarios.idPersona", array("idPersona","nombreCompleto"));
 
@@ -96,12 +97,13 @@ class Usuarios extends TableGateway
 
     public function guardar($datos){
         $resultado = array();
-        try {
-            $sql = new Sql($this->dbAdapter);
+        $sql = new Sql($this->dbAdapter);
+        $password = new UserPassword("sha1");
+        try {            
             $insert = $sql->insert('usuarios');
             $arrayDatos = array(
                     'email' => $datos['email'],
-                    'contrasena' => sha1($datos['contrasena']),                   
+                    'contrasena' => $password->create($datos['contrasena']),                   
                     'idPersona' => $datos['idPersona']      
             );
     
@@ -123,14 +125,13 @@ class Usuarios extends TableGateway
     
     public function actualizar($datos){
         $resultado = array();
-        try {
-            $sql = new Sql($this->dbAdapter);
+        $sql = new Sql($this->dbAdapter);       
+        try {            
             $update = $sql->update();
             $update->table('usuarios');
             $arrayDatos = array(
                     'email' => $datos['email'],
-                    'contrasena' => $datos['contrasena'],
-                    'idPerfil' => $datos['idPerfil'],
+                    //'contrasena' => $datos['contrasena'],                    
                     'idPersona' => $datos['idPersona']      
             );
             $update->set($arrayDatos);
@@ -153,8 +154,10 @@ class Usuarios extends TableGateway
         try {
             $sql = new Sql($this->dbAdapter);
             $elimina = $sql->delete('usuarios')->where("idUsuario = $idUsuario");
+            //echo $sql->getSqlStringForSqlObject($elimina);
             $statement = $sql->prepareStatementForSqlObject($elimina);
             $resul = $statement->execute();
+            $resultado = array("success" => true);
         } catch (\Exception $e) {
             $code = $e->getCode();
             $msg = $e->getMessage();

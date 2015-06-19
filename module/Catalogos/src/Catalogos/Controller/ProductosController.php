@@ -122,7 +122,8 @@ class ProductosController extends AbstractActionController
     
     	$viewmodel = new ViewModel();
     	$clienteForm = new ProductosForm('fmProductos',$this->dbAdapter);    
-    
+        $validaForm = new ValidaFormProductos();
+        $clienteForm->setInputFilter($validaForm->getInputFilter());
     
     	$this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
     

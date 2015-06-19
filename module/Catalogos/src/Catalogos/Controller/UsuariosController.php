@@ -78,7 +78,9 @@ class UsuariosController extends AbstractActionController
         $request = $this->getRequest();
         $response = $this->getResponse();
         
-        $usuariosForm = new UsuariosForm("formularioUsuario",$this->dbAdapter);        
+        $usuariosForm = new UsuariosForm("formularioUsuario",$this->dbAdapter); 
+        $validaForm = new ValidaFormUsuarios();
+        $usuariosForm->setInputFilter($validaForm->getInputFilter());
         $viewmodel = new ViewModel();
         
         $viewmodel->setTerminal($request->isXmlHttpRequest());
@@ -121,8 +123,65 @@ class UsuariosController extends AbstractActionController
             $json = new JsonModel($modelo->comboGrid($q,10,0));
             return $json;
             
-        }
-    
+        }    
     }
+    
+    public function actualizaAction(){
+        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        $request = $this->getRequest();
+        $response = $this->getResponse();
+        
+        $viewmodel = new  ViewModel();
+        $formUsuario = new UsuariosForm("formularioUsuario",$this->dbAdapter);
+        $validaForm = new ValidaFormUsuarios();
+        $formUsuario->setInputFilter($validaForm->getInputFilter());
+        $viewmodel->setTerminal($request->isXmlHttpRequest());
+        
+        $messages = array();
+        if ($request->isPost()){
+            $formUsuario->setData($request->getPost());
+            if (! $formUsuario->isValid()) {
+                $errors = $formUsuario->getMessages();
+        
+                foreach($errors as $key=>$row){
+                    if (!empty($row) && $key != 'submit') {
+                        foreach($row as $keyer => $rower){
+                            $messages[$key][] = $rower;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!empty($messages)){
+            $response->setContent(\Zend\Json\Json::encode($messages));
+        } else {
+            $modelo = new Usuarios($this->dbAdapter);
+            $guarda = $modelo->actualizar($formUsuario->getData());
+            $response->setContent(\Zend\Json\Json::encode($guarda));
+        }
+        return $response;  
+    }
+    
+    public function eliminarAction() {
+        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        $request = $this->getRequest();
+        $response = $this->getResponse();
+        $viewmodel = new ViewModel();
+        $filer = new InputFilter();
+        
+        $viewmodel->setTerminal($request->isXmlHttpRequest());
+        
+        
+        $messages = array();
+        $idUsuario = $filer->process($this->params()->fromPost('idUsuario'));
+        if ($request->isPost()){
+            $modelo = new Usuarios($this->dbAdapter);
+            $elimina = $modelo->elimina($idUsuario);
+            $response->setContent(\Zend\Json\Json::encode($elimina));
+            return $response;
+        }
+    }
+    
     
 }

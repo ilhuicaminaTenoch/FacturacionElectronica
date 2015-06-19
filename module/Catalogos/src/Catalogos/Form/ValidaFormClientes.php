@@ -24,6 +24,7 @@ class ValidaFormClientes implements InputFilterAwareInterface
     {
         $isEmpty = \Zend\Validator\NotEmpty::IS_EMPTY;
         $invalidEmail = \Zend\Validator\EmailAddress::INVALID_FORMAT;
+        $regex = \Zend\Validator\Regex::NOT_MATCH;
         
         if (! $this->inputFilter) {
             $inputFilter = new InputFilter();
@@ -400,6 +401,72 @@ class ValidaFormClientes implements InputFilterAwareInterface
             								)
             						)
             				)));
+            
+            $inputFilter->add(
+                    $factory->createInput(array(
+                            'name' => 'rfc',
+                            'required' => true,
+                            'filters' => array(
+                                    array('name' => 'StripTags'),
+                                    array('name' => 'StringTrim')
+                            ),
+                            'validators' => array(
+                                    array(
+                                            'name' => 'NotEmpty',
+                                            'options' => array(
+                                                    'messages' => array(
+                                                            $isEmpty => 'RFC no puede estar vacio.'
+                                                    ),
+                                                    'encoding' => 'UTF-8',
+                                                    'min' => 5,
+                                                    'max' => 15
+                                            ),
+                                            'break_chain_on_failure' => true,                                            
+                                    ),
+                                    array(
+                                            'name' => 'Regex',
+                                            'options' => array(
+                                                    'pattern' => '/^([A-Z,Ñ,&]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[A-Z|\d]{3})$/',
+                                                    'messages' => array(
+                                                            $regex => 'RFC con formato invalido'
+                                                    ),
+                                            ),
+                                    ),
+                            )
+                    )));
+            
+            $inputFilter->add(
+                    $factory->createInput(array(
+                            'name' => 'curp',
+                            'required' => true,
+                            'filters' => array(
+                                    array('name' => 'StripTags'),
+                                    array('name' => 'StringTrim')
+                            ),
+                            'validators' => array(
+                                    array(
+                                            'name' => 'NotEmpty',
+                                            'options' => array(
+                                                    'messages' => array(
+                                                            $isEmpty => 'CURP no puede estar vacio.'
+                                                    ),
+                                                    'encoding' => 'UTF-8',
+                                                    'min' => 5,
+                                                    'max' => 20
+                                            ),
+                                            'break_chain_on_failure' => true,
+                                    ),
+                                    array(
+                                            'name' => 'Regex',
+                                            'options' => array(
+                                                    'pattern' => '/^[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$/',
+                                                    'messages' => array(
+                                                            $regex => 'CURP con formato invalido'
+                                                    ),
+                                            ),
+                                    ),
+                            )
+                    )));
         	
         	
         	$this->inputFilter = $inputFilter;        	

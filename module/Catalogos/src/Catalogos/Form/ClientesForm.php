@@ -23,7 +23,7 @@ class ClientesForm extends Form
                 'type' => 'Zend\Form\Element\Text',
                 'attributes' => array(
                         'name' => 'nombreCompleto',
-                        'class' => 'easyui-textbox',                        
+                        //'class' => 'easyui-textbox',                        
                         'required' => 'true',
                         'data-options' => 'prompt:\'Nombre completo\''
                 ),
@@ -188,9 +188,36 @@ class ClientesForm extends Form
         		),
         		'options' => array(
         				'label' => 'Estado:',
-        				'label_attributes' => array('class'  => 'fitem'),
-        
+        				'label_attributes' => array('class'  => 'fitem'),        
         		)
+        ));
+        
+        $this->add(array(
+                'name' => 'rfc',
+                'type' => 'Zend\Form\Element\Text',
+                'attributes' => array(
+                        'name' => 'rfc',
+                        'class' => 'easyui-textbox',
+                        'required' => 'true'
+                ),
+                'options' => array(
+                        'label' => 'RFC:',
+                        'label_attributes' => array('class'  => 'fitem'),
+                )
+        ));
+        
+        $this->add(array(
+                'name' => 'curp',
+                'type' => 'Zend\Form\Element\Text',
+                'attributes' => array(
+                        'name' => 'curp',
+                        'class' => 'easyui-textbox',
+                        'required' => 'true'
+                ),
+                'options' => array(
+                        'label' => 'CURP:',
+                        'label_attributes' => array('class'  => 'fitem'),
+                )
         ));
        
     }    

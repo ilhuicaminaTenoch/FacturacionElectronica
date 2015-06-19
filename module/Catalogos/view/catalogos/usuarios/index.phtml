@@ -15,7 +15,6 @@ data-options="rownumbers:true,
 </table>
 <div id="toolbar">
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">Nuevo Usuario</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Editar Usuario</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Eliminar Usuario</a>
 </div>
 
@@ -138,5 +137,26 @@ function saveUser(){
             }
         }
     });
+}
+
+function destroyUser(){
+	var row = $('#dgUsuarios').datagrid('getSelected');	
+	if (row){
+		$.messager.confirm('Confirm','Deseas eleminar este usuario?',function(r){
+			if (r){
+				$.post('<?php echo $this->url('catalogos/default', array('controller' => 'usuarios','action' => 'eliminar')); ?>',{idUsuario:row.idUsuario},function(result){
+					
+					if (result.success){
+						$('#dgUsuarios').datagrid('reload');
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.ErrorInterno
+						});
+					}
+				},'json');
+			}
+		});
+	}
 }
 </script>
